@@ -8,18 +8,13 @@ trait Functions:
   def max(a: List[Int]): Int // gives Int.MinValue if a is empty
 
 object FunctionsImpl extends Functions:
-  override def sum(a: List[Double]): Double = a match
-    case Nil => 0
-    case h :: t  => h + sum(t)
 
+  override def sum(a: List[Double]): Double = combine(a)
+  override def concat(a: Seq[String]): String = combine(a)
+  override def max(a: List[Int]): Int = combine(a)
 
-  override def concat(a: Seq[String]): String = a match
-    case Nil => ""
-    case h :: t => h ++ concat(t)
-
-  override def max(a: List[Int]): Int = a match
-    case Nil => Integer.MIN_VALUE
-    case h :: t => Math.max(h,max(t))
+  private def combine[A](list: Iterable[A])(using combiner: Combiner[A]):A =
+    list.foldLeft(combiner.unit)(combiner.combine)
 
 /*
  * 2) To apply DRY principle at the best,
@@ -38,7 +33,22 @@ trait Combiner[A]:
   def unit: A
   def combine(a: A, b: A): A
 
+given sumCombiner: Combiner[Double] with
+  override def unit: Double = 0
+
+  override def combine(a: Double, b: Double): Double = a + b
+
+given stringCombiner: Combiner[String] with
+  override def unit: String = ""
+  override def combine(a: String, b: String): String = a ++ b
+
+given maxCombiner: Combiner[Int] with
+  override def unit: Int = Integer.MIN_VALUE
+  override def combine(a: Int, b: Int): Int = Math.max(a,b)
+
 @main def checkFunctions(): Unit =
+
+
   val f: Functions = FunctionsImpl
   println(f.sum(List(10.0, 20.0, 30.1))) // 60.1
   println(f.sum(List())) // 0.0
