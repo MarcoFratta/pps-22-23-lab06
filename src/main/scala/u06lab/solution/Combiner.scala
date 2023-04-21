@@ -12,7 +12,6 @@ object FunctionsImpl extends Functions:
   override def sum(a: List[Double]): Double = combine(a)
   override def concat(a: Seq[String]): String = combine(a)
   override def max(a: List[Int]): Int = combine(a)
-
   private def combine[A](list: Iterable[A])(using combiner: Combiner[A]):A =
     list.foldLeft(combiner.unit)(combiner.combine)
 
