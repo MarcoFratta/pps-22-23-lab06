@@ -8,16 +8,14 @@ object Solitaire:
   private type Solution = Seq[Position]
   private type Board = Seq[Int]
   private type SolutionFactory = Solution => Iterable[Solution]
-  private val verticalStep: Int = 1;
-  private val diagonalStep: Int = 1;
+  private val verticalStep: Int = 3;
+  private val diagonalStep: Int = 2
   private val moves: Set[Position] = Set((-diagonalStep, -diagonalStep), (diagonalStep, diagonalStep),
     (-diagonalStep, diagonalStep), (diagonalStep, -diagonalStep),
     (verticalStep, 0), (0, verticalStep),
     (-verticalStep, 0), (0, -verticalStep))
 
   given SolutionFactory = x => LazyList(x).view
-
-  def getMoves(k: Position): Iterable[Position] = moves.map(x => (k._1 + x._1, k._2 + x._2))
 
   def render(solution: Solution, width: Int, height: Int): Unit =
     val reversed = solution.reverse
@@ -30,8 +28,8 @@ object Solitaire:
     println(rows.mkString("\n") + "\n")
 
   def main(args: Array[String]): Unit = {
-    val w = 3
-    val h = 3
+    val w = 7
+    val h = 5
     println(s"Computing solutions for $w x $h grid...")
     var solution: Int = 0
     placeMarks(w, h) foreach (x =>
@@ -41,6 +39,7 @@ object Solitaire:
   }
 
   private def getIndex(w: Int)(p: Position) = (p._2 * w) + p._1
+  def getMoves(k: Position): Iterable[Position] = moves.map(x => (k._1 + x._1, k._2 + x._2))
 
   private def solutions(b: Board)(k: Position)(i: Int)(f: Position => Int)(max: Int)
                        (using factory: SolutionFactory): Iterable[Solution] = i match

@@ -4,7 +4,7 @@ import java.util.OptionalInt
 
 // Optional!
 object ConnectThree extends App:
-  val bound = 3
+  var bound = 3
   enum Player:
     case X, O
     def other: Player = this match
